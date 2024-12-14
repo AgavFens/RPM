@@ -1,0 +1,88 @@
+﻿@model IEnumerable<WebApplication11.Models.Catalog>
+@{
+    ViewData["Title"] = "Управление пользователями";
+    // Базовый путь к папке, где находятся ваши изображения
+    string basePath = "img"; // Или "wwwroot/img" в зависимости от контекста
+    string fullPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", basePath);
+
+    // Получаем относительные пути к файлам
+    var fileNames = Directory.GetFiles(fullPath)
+                              .Select(file => "\\" + System.IO.Path.Combine(basePath, System.IO.Path.GetFileName(file))) // Формируем относительный путь
+                              .ToList();
+
+    string[] categories = new string[] { "Лимпопо лимон", "Лимпопо клубника", "Лимпопо мята" };
+}
+
+<div class="container mt-4">
+    <h2>Каталог товаров</h2>
+    <form asp-action="Create" asp-controller="home">
+        <button class="btn btn-success mb-3">Добавить новый продукт</button>
+    </form>
+
+    <div id="productContainer">
+        @foreach (var item in Model)
+        {
+            <div class="card mb-3">
+                <div class="card-body">
+                    <form asp-action="Edit" asp-controller="home" method="post" class="row g-3 align-items-center">
+                        <input type="hidden" name="IdProduct" value="@item.IdProduct">
+                        <div class="col-md-3">
+                            <label for="productName" class="form-label">Название</label>
+                            <input type="text" class="form-control" id="ProductName" name="ProductName" value="@item.ProductName">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="productDescription" class="form-label">Описание</label>
+                            <input type="text" class="form-control" id="Description" name="Description" value="@item.Description">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="productPrice" class="form-label">Цена</label>
+                            <input type="text" class="form-control" id="Price" name="Price" value="@item.Price">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="productWeight" class="form-label">Вес (г)</label>
+                            <input type="text" class="form-control" id="Weight" name="Weight" value="@item.Weight">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="productStock" class="form-label">В наличии</label>
+                            <input type="text" class="form-control" id="Stock" name="Stock" value="@item.Stock">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="productCategory" class="form-label">Категория</label>
+                            <select type="text" class="form-control" id="CategoryName" name="CategoryName" value="@item.CategoryName">
+                                <option>@item.CategoryName</option>
+                                @foreach (string categoria in categories)
+                                {
+                                    if (categoria != item.CategoryName)
+                                    {
+                                        <option>@categoria</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="productImagePath" class="form-label">Путь к изображению</label>
+                            <select type="text" class="form-control" id="PathToImage" name="PathToImage" value="@item.PathToImage">
+                                <option>@item.PathToImage</option>
+                                @foreach (string file in fileNames)
+                                {
+                                    if (file != item.PathToImage)
+                                    {
+                                        <option>@file</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-12 d-flex justify-content-end mt-3">
+                            <button type="submit" class="btn btn-primary me-2">Сохранить</button>
+                        </div>
+                    </form>
+
+                    <form asp-action="Delete" asp-controller="home" method="post" class="d-inline">
+                        <input type="hidden" name="id" value="@item.IdProduct">
+                        <button type="submit" class="btn btn-danger">Удалить</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+</div>
